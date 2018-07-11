@@ -1,0 +1,17 @@
+Para que los compos creados 
+o actualizados en los modelos 
+se lleven a la base de datos 
+debemos ejecutar las migraciones
+
+    rake db:migrate
+
+luego de esto se abra actualizado la base de datos 
+
+para ver que rutas existen en el routes.rb (configuracion de rutas)
+para poder testear los cambios que hicimos 
+
+    rake routes
+
+este comando muestra todas las rutas establecidas
+y podremos hacer la pruebas de forma manual en el navegador 
+o con herramientas como postman
