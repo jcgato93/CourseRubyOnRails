@@ -1,0 +1,36 @@
+En framework de rails nos permite trabajar 
+con muchas de las bases de datos convencionales 
+como MySql , sqlite , postgresql   entre otras
+para ello solo debemos cambiar algunos parametros en 
+la configuracion para la conexion con cada una 
+
+en este ejemplo se explica la configuracion para postgresql
+
+1- Instalar la gema de postgresql
+    gem install pg
+
+2- agregamos la dependencia al archivo Gemfile 
+
+    gem 'pg' 
+
+    si se tiene algun problema podemos especificar la version
+
+      gem "pg", "~> 0.18" 
+
+2- luego vamos al archivo de configuracion de bases de dastos
+
+        [proyecto]\config\database.yml
+
+        en este cambiamos la primeras lineas que por defeccto 
+        tienen la configuracion para sqlite3 
+        por lo siguiente
+
+
+        default:&default
+        adapter: postgresql
+        encoding: unicode
+        username: postgres
+        password: Tu_Contrasena
+        pool:<%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+        timeout:5000
+
