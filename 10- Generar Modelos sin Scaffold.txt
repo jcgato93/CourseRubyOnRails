@@ -1,0 +1,57 @@
+1. vamos a la carpeta de modelos [root]/app/models/
+
+2. se crea un archivo .rb con el nombre del modelo 
+   recordar que debe ser el nombre en ingles, en minusculas y en singular 
+
+3. Crear una clase que herede de  ActiveRecord::Base
+
+    class Playlist < ActiveRecord
+    end
+
+    si no queremos dejar el nombre por defecto de la tabla
+    con la que creara rails, podemos especificarla reescribiendo
+    el metodo table_name
+
+    class Playlist < ActiveRecord
+        def self.table_name= "nombre tabla en plural"
+    end
+
+
+4. Crear archivo de migracion Create[nombre table en plural]
+
+    rails generate migraiton   #"este genera un archivo en  [root/db/migrations]"
+
+
+5. Configurar archivo de migracion
+
+    class Create[Nombre tabla en plural] < ActiveRecord::migrations
+        def change
+            create_table :[nombre tabla plural] do |t|
+                t.[tipo dato] :[nombre campo]
+                t.integer :number_of_votes
+            end
+        end
+
+
+6.  correr la migracion  a la base de datos
+    
+    si la base de datos aun no existe usamos el comando 
+        rils db:create
+
+    rake db:migrate:status  #"para ver status"
+
+    rake db:migrate  #"ejecutar migraciones"
+
+    este creara la tabla correspondiente a nuestro modelo
+
+7.  Establecer recurso de rutas 
+    para esto vamos a la carpeta  [root]/config/routes.rb  
+
+    y añadimos 
+
+        resources :[nombre modelo en plural]
+
+
+8.  Crear controlador 
+
+        rails generate controller [nombre modelo en plural]
