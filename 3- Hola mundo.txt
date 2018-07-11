@@ -1,0 +1,9 @@
+Para crear un nuevo proyecto en rails
+
+    rails new [PATH/name]
+
+
+Para correr el server 
+
+    rails s 
+    rails server
