@@ -1,0 +1,7 @@
+1. Tener instalado Ruby
+
+2. desde la consola con el comando 
+    gem install rails -v [version]
+
+3. Comprobar instalacion
+    rails -v
