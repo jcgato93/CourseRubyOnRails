@@ -1,0 +1,43 @@
+root
+| 
+|_____app/  (se organizan todos los componente de la aplicacion)
+|        |
+|        |_assets  (son todos los archivos que se requieren del lado del front end)
+|        |
+|        |_controllers (van todos los controladores de la aplicacion, estos se encargan de manejo de peticiones http)
+|        |
+|        |_helpers (son archivos de codigo reutilizable, que se utilizan en varias vistas)
+|        |
+|        |_mailers (si la aplicacion tiene la funcion de envio de correos , la configuracion y logica de ello debe esta aqui!)
+|        |
+|        |_models  (son los modelos que representan la base de datos y la logica estructural)
+|        |
+|        |_views   (vistas de la aplicacion)
+|
+|
+|_____bin/
+|
+|_____config/ (configuracion de la aplicacion)
+|        |
+|        |_enviroment/  (configuracion de los diferentes entornos "development, production, test")
+|        |
+|        |_initializers (codigos que se ejecutan en cuanto inicia la aplicacion)
+|        |
+|        |_locales 
+|        |
+|        |_database.yml  (configuracion de la base de datos)
+|        |
+|        |_routes.rb  (rutas para navegar por la aplicacion)
+|        |
+|        |_secrets.yml (toda la informacion sensible "keys , correos , passwords")
+|
+|
+|____db/ (guardo los archivos de configuracion cuando se genera la base de datos)
+|
+|____lib/ (librerias de terceros)
+|
+|____log/ (logs de las interacciones de los usuarios como peticiones a los controllers)
+|
+|____public (todos los archivos estaticos que no necesiten ser procesador por Ruby)
+|
+|____Gemfile (todas las dependencias que tiene la aplicacion)
