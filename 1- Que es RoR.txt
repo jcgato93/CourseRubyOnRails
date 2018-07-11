@@ -1,0 +1,55 @@
+=======================
+Que es Ruby on Rails?
+=======================
+
+Es un framework para desorrollo
+web open source creado por David
+Heinemeier Hansson (DHH) a partir
+de su trabajo en Basecamp
+
+
+
+=======================
+Que aplicaciones se pueden hacer?
+=======================
+Plataformas como:
+
+Basecamp,
+GitHub,
+Shopify,
+Airbnb,
+Twitch,
+Soundcloud,
+Hulu,
+Square
+
+
+
+=======================
+Por que elegir Rails?
+=======================
+
+Optimizado para la
+felicidad del programador
+
+"I created Rails for me. To make me smile, first and foremost"
+  -David Heinemeier Hansson
+
+Cracion de aplicaciones de forma muy rapida
+
+Convención sobre configuración
+
+No se necesita ser un experto
+
+Código legible
+
+
+
+
+=======================
+Arquitectura 
+=======================
+
+Este funciona bajo la Arquitectura MVC
+(Modelo - Vista - Controlador)
+
