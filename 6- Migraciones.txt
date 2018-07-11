@@ -6,6 +6,12 @@ debemos ejecutar las migraciones
     rake db:migrate
 
 luego de esto se abra actualizado la base de datos 
+estas migracioes pueden verse en 
+root
+    |
+    |_db
+        |_migrations
+
 
 para ver que rutas existen en el routes.rb (configuracion de rutas)
 para poder testear los cambios que hicimos 
