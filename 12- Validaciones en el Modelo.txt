@@ -1,0 +1,60 @@
+Rails al igual que otros frameworks nos permite 
+validar nuestros datos , para especificar que sean 
+requeridos o cosas por el estilo , haciendolo desde el 
+modelo
+
+http://guides.rubyonrails.org/active_record_validations.html
+
+=================================
+validar que un campo es requerido
+================================= 
+
+    class [Model] < ActiveRecord::Base
+       
+        validates :[campo] , presence: true 
+    
+    end
+
+=================================
+validar cantidad de caracteres 
+================================
+
+    class [Model] < ActiveRecord::Base
+       
+        validates :[campo] , length: { minimun: 20 , maximun: 30, message: "el numero de caracteres minimo son 20 y maximo 30"} 
+    
+    end
+
+
+
+=================================
+validar campos unicos
+================================
+
+    class [Model] < ActiveRecord::Base
+       
+        validates :[campo] , uniqueness: true   # esto indica que solo pueden existir registros unicos para este campo , ej : nombres, cedulas ... etc
+    
+    end  
+
+
+=================================
+validar expresiones regulares
+================================
+
+    class [Model] < ActiveRecord::Base
+       
+        validates :[campo] ,  format: { with: /\A[a-zA-Z]+\z/,
+                                message: "only allows letters" }
+    
+    end   
+
+
+
+Para saber si el objeto pasa Todas las validaciones , en el controlador 
+podemos usar 
+
+
+    @object.valid?   # true si pasa
+
+    @object.invalid? #true si no pasa
