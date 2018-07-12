@@ -1,0 +1,33 @@
+Strong params se refiere que cuales son los 
+datos que capturara como parametros de las 
+peticiones HTTP , es decir que algo asi como 
+una lista blanca de que campos si pasan a los 
+controladores
+
+para hacer uso de esta caracteristica vamos a un controladores
+y al final de las acciones usamos el siguiente codigo:
+
+        private 
+
+        def article_params
+
+            params.require(:[model].permit(:[campo],:[campo])  # [campo representa los datos que seran permitidos en las peticiones HTTP]
+        end
+
+
+luego de esto en los controladores podemos utilizar el metodo
+article_params para obtener los parametros que llegan en las peticiones
+evitando riesgos de seguridad en la aplicaciones
+
+ ej  
+
+        def create
+            @article= Article.new(article_params)
+
+            if @article.save
+                redirect_to @article
+            else
+                render 'index'
+            end
+
+        end
