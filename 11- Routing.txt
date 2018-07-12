@@ -1,0 +1,52 @@
+En rails cuando utilizamos el Scaffold, este automaticamente 
+crea las rutas a los diferentes controladores 
+pero si queremos modificarles podemos ir a la siguiente
+ruta
+
+    [root]/config/routes.rb
+
+en esta se encuentran todas las rutas de nuestra aplicacion 
+si aun no hemos creado ninguna aparece algo como esto
+
+    Rails.application.routes.draw do
+    # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+    end
+
+cuando crea una con el scaffold 
+
+       Rails.application.routes.draw do
+        # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+
+        resources  :[modelo]
+        end 
+
+el comando resources le indica que para ese modelo debe trabajar con la siguientes rutas, sin necesidad de especificarles ninguna otra cosa 
+
+        get "/[model]"
+        post "/[model]"
+        delete "/[model]/:id"
+        get  "/[model]/:id"
+        get  "/[model]/new"
+        get  "/[model]/:id/edit"
+        patch "/[model]/:id"
+        put   "/[model]/:id"
+
+Para configurar las rutas tenemos varios comandos como:
+
+    para exclurir alguna ruta 
+
+        resources  :[modelo] , except: [:delete, :put]   #excluye las rutas de delete y de put
+
+    para que cree solo las rutas que necesitamos
+
+        resources  :[modelo] , only: [:create, :show]
+
+    para crear nuestras propias rutas existen diferentes opciones
+
+        get "/patients" , to: "[controller]#[action]"
+
+        post "/patients" , to: :action
+
+
+
+
