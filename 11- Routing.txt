@@ -50,3 +50,10 @@ Para configurar las rutas tenemos varios comandos como:
 
 
 
+para especificar una ruta por defecto, es decir con la
+que inicia la aplicacion
+
+        root  '[controller]#[action]'
+
+
+
