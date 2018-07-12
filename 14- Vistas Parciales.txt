@@ -1,0 +1,32 @@
+Son fragmentes de vistas reutilizable 
+que nos facilita el llamarlas dentro de otra
+vista, similar al  iframe en el html normal
+
+
+por convencion las vistas parciales con un _
+
+ ej  _vista.html.erb
+
+
+para llamar esa vista parcial desde otra vista 
+utilizamos la siguiente etiqueta
+
+        <%= render "[path]"%>
+
+        ejemplo
+
+        <%= render "form"%>
+
+
+Una de las funcionalidades de estas vistas es que podemos pasarle variables
+estas pueden usarse como variables locales detro de una vista parcial
+
+        <%= render "[path]", {name: "Editar", otravariable: "Crear"} %>
+
+
+un uso practico seria , el reutilizar el formulario para crear o editar 
+
+<h1> formulario de  <%= name ||= "Crear" %></h1>    #dependiendo de la variable que pasemos por parametro pude aparecer un enunciado diferente
+
+
+utilizamos   "||=" para decir que si la variable no a sido definida o inicializada , tenga un valor por defecto
