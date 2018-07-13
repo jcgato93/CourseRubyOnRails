@@ -1,0 +1,57 @@
+Podes indicar desde el modelo que relacion 
+tinene entre si 
+
+teniendo esto en cuenta , veamos un ejemplo mas claro
+
+temos 2 tablas una es "articles" y la otra es "users" 
+un usuario puede tener muchos articulos asociados, asi que para esto vamos a crear
+esta relacion 
+
+podemos utilizar los generadores de la siguiente manera
+
+        rails generate migration add_user_id_to_articles user:references
+
+este generara una nueva migracion indicando que añada un nuevo campo al modelo
+de "artiles" referenciado a user 
+
+si vemos la migracion que se genera deberia ser algo asi :
+
+    class AddUserIdToArticles < ActiveRecord::migration
+        def change
+            add_reference :articles, :user, index: true
+            add_foreign_key :articles, :users
+        end
+
+
+luego corremos la migracion para que realice el cambio en la base de datos
+
+        rake db:migrate
+
+
+para consultar datos teniendo en cuenta esta relacion 
+podemos realizar consultas utilizando los joins , pero ActiveRecord nos
+provee una manera mucho mas  facil que lo hace de forma implicita 
+para ello vamos a los modelos y realizamos lo siguiente : 
+
+
+en el modelo de "Article" añadimos 
+
+        belongs_to :user
+
+esto le indica al ActiveRecord que "Article" pertenece a 
+
+
+en el modelo de "User" añadimos 
+
+        has_many :article 
+
+esto indica que "User"  tiene muchos articulos, y de esta forma 
+queda esta relacion implicita entre los modelos
+esto nos da una gran ventaja al momento de realizar consulta 
+
+ejemplo : si queremos saber que usuario realizo el ultimo articulos
+          podemos hace lo siguiente 
+
+             Article.last.user
+
+este nos retorna el articulo y el usuario que lo hizo             
