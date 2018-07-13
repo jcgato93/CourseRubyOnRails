@@ -1,0 +1,367 @@
+Los callbacks son acciones que se ejecutan 
+antes  o despues de los lladomos a los controladores 
+
+ejemplo: queremos que para ciertas acciones de nuestro controladores
+        el usuario debe haber iniciado session peviamente
+
+        class ArticlesController < ApplicationController
+
+            before_action :validate_user, except: [:show, :index]
+
+
+            private
+            def validate_user
+                redirect_to new_user_session_path, notice: "Necesitas Inicias sesion"            
+            end
+
+        end
+
+utilizazon before_action  podemos indicarle de que antes que ejecute un metodo realice 
+una opcion , en este caso que ejecute el metodo "validate_user"
+
+
+
+1 El ciclo de vida del objeto
+Durante el funcionamiento normal de una aplicación de Rails, los objetos pueden crearse, actualizarse y destruirse. Active Record proporciona ganchos en este ciclo de vida del objeto para que pueda controlar su aplicación y sus datos.
+
+Las devoluciones de llamada le permiten activar la lógica antes o después de una alteración del estado de un objeto.
+
+Descripción de 2 Callbacks
+Las retrollamadas son métodos que se llaman en ciertos momentos del ciclo de vida de un objeto. Con devoluciones de llamadas es posible escribir código que se ejecutará cada vez que se cree, guarde, actualice, elimine, valide o cargue un objeto de Active Record de la base de datos.
+
+2.1 Registro de devolución de llamada
+Para utilizar las devoluciones de llamada disponibles, debe registrarlas. Puede implementar las devoluciones de llamada como métodos ordinarios y usar un método de clase de estilo de macro para registrarlos como devoluciones de llamada:
+
+class User < ApplicationRecord
+  validates :login, :email, presence: true
+ 
+  before_validation :ensure_login_has_a_value
+ 
+  private
+    def ensure_login_has_a_value
+      if login.nil?
+        self.login = email unless email.blank?
+      end
+    end
+end
+Los métodos de clase de estilo macro también pueden recibir un bloque. Considere usar este estilo si el código dentro de su bloque es tan corto que cabe en una sola línea:
+
+class User < ApplicationRecord
+  validates :login, :email, presence: true
+ 
+  before_create do
+    self.name = login.capitalize if name.blank?
+  end
+end
+Las devoluciones de llamada también se pueden registrar para disparar solo en ciertos eventos del ciclo de vida:
+
+class User < ApplicationRecord
+  before_validation :normalize_name, on: :create
+ 
+  # :on takes an array as well
+  after_validation :set_location, on: [ :create, :update ]
+ 
+  private
+    def normalize_name
+      self.name = name.downcase.titleize
+    end
+ 
+    def set_location
+      self.location = LocationService.query(self)
+    end
+end
+Se considera buena práctica declarar los métodos de devolución de llamada como privados. Si se dejan públicas, se pueden llamar desde fuera del modelo y violan el principio de encapsulación de objetos.
+
+3 rellamadas disponibles
+Aquí hay una lista con todas las devoluciones de llamada de registro activo disponibles, enumeradas en el mismo orden en el que recibirán llamadas durante las operaciones respectivas:
+
+3.1 Creando un Objeto
+before_validation
+after_validation
+before_save
+around_save
+before_create
+around_create
+after_create
+after_save
+after_commit/after_rollback
+3.2 Actualización de un objeto
+before_validation
+after_validation
+before_save
+around_save
+before_update
+around_update
+after_update
+after_save
+after_commit/after_rollback
+3.3 Destrucción de un objeto
+before_destroy
+around_destroy
+after_destroy
+after_commit/after_rollback
+after_savese ejecuta tanto en la creación como en la actualización, pero siempre después de las devoluciones de llamada más específicas after_createy after_update, sin importar el orden en que se ejecutaron las llamadas a la macro.
+
+before_destroylas devoluciones de llamadas se deben realizar antes de las dependent: :destroy asociaciones (o usar la prepend: trueopción), para garantizar que se ejecutan antes de que los registros sean borrados por dependent: :destroy.
+
+3.4 after_initializeyafter_find
+Se after_initializellamará a la devolución de llamada cada vez que se crea una instancia de un objeto de registro activo, ya sea mediante el uso directo newo cuando se carga un registro desde la base de datos. Puede ser útil para evitar la necesidad de anular directamente su initializemétodo de registro activo .
+
+Se after_findllamará a la devolución de llamada siempre que Active Record cargue un registro de la base de datos. after_findse llama antes after_initializesi ambos están definidos.
+
+Las after_initializey las after_finddevoluciones de llamada no tienen before_*contrapartidas, pero pueden registrarse como las otras devoluciones de llamada de Active Record.
+
+class User < ApplicationRecord
+  after_initialize do |user|
+    puts "You have initialized an object!"
+  end
+ 
+  after_find do |user|
+    puts "You have found an object!"
+  end
+end
+ 
+>> User.new
+You have initialized an object!
+=> #<User id: nil>
+ 
+>> User.first
+You have found an object!
+You have initialized an object!
+=> #<User id: 1>
+3.5 after_touch
+Se after_touchllamará a la devolución de llamada siempre que se toque un objeto de registro activo.
+
+class User < ApplicationRecord
+  after_touch do |user|
+    puts "You have touched an object"
+  end
+end
+ 
+>> u = User.create(name: 'Kuldeep')
+=> #<User id: 1, name: "Kuldeep", created_at: "2013-11-25 12:17:49", updated_at: "2013-11-25 12:17:49">
+ 
+>> u.touch
+You have touched an object
+=> true
+Se puede usar junto con belongs_to:
+
+class Employee < ApplicationRecord
+  belongs_to :company, touch: true
+  after_touch do
+    puts 'An Employee was touched'
+  end
+end
+ 
+class Company < ApplicationRecord
+  has_many :employees
+  after_touch :log_when_employees_or_company_touched
+ 
+  private
+  def log_when_employees_or_company_touched
+    puts 'Employee/Company was touched'
+  end
+end
+ 
+>> @employee = Employee.last
+=> #<Employee id: 1, company_id: 1, created_at: "2013-11-25 17:04:22", updated_at: "2013-11-25 17:05:05">
+ 
+# triggers @employee.company.touch
+>> @employee.touch
+Employee/Company was touched
+An Employee was touched
+=> true
+4 ejecución de devoluciones de llamada
+Los siguientes métodos activan devoluciones de llamada:
+
+create
+create!
+destroy
+destroy!
+destroy_all
+save
+save!
+save(validate: false)
+toggle!
+touch
+update_attribute
+update
+update!
+valid?
+Además, la after_finddevolución de llamada se desencadena por los siguientes métodos de búsqueda:
+
+all
+first
+find
+find_by
+find_by_*
+find_by_*!
+find_by_sql
+last
+La after_initializedevolución de llamada se activa cada vez que se inicializa un nuevo objeto de la clase.
+
+Los métodos find_by_*y find_by_*!son buscadores dinámicos generados automáticamente para cada atributo. Obtenga más información sobre ellos en la sección Buscadores dinámicos
+
+5 omisión de devoluciones de llamada
+Al igual que con las validaciones, también es posible omitir las devoluciones de llamadas mediante los siguientes métodos:
+
+decrement
+decrement_counter
+delete
+delete_all
+increment
+increment_counter
+toggle
+update_column
+update_columns
+update_all
+update_counters
+Sin embargo, estos métodos se deben usar con precaución, ya que las reglas comerciales importantes y la lógica de la aplicación se pueden mantener en las devoluciones de llamada. Superarlos sin entender las implicaciones potenciales puede conducir a datos no válidos.
+
+6 Detener la ejecución
+A medida que comience a registrar nuevas devoluciones de llamada para sus modelos, se pondrán en cola para su ejecución. Esta cola incluirá todas las validaciones de su modelo, las devoluciones de llamada registradas y la operación de la base de datos que se ejecutará.
+
+Toda la cadena de devolución de llamada está envuelta en una transacción. Si alguna devolución de llamada genera una excepción, la cadena de ejecución se detiene y se emite un ROLLBACK. Para detener intencionalmente el uso de una cadena:
+
+throw :abort
+Cualquier excepción que Rails no vuelva a generar ActiveRecord::Rollbacko ActiveRecord::RecordInvalidque se vuelva a generar después de que se detenga la cadena de devolución de llamada. Planteando una excepción que no sea ActiveRecord::Rollbacko que ActiveRecord::RecordInvalidpueda romper el código que no espera métodos como savey update_attributes(que normalmente intenta devolver trueo false) para generar una excepción.
+
+7 rellamadas relacionales
+Las rellamadas funcionan a través de relaciones modelo, e incluso pueden ser definidas por ellos. Supongamos un ejemplo en el que un usuario tiene muchos artículos. Los artículos de un usuario deberían destruirse si el usuario es destruido. Agreguemos una after_destroydevolución de llamada al Usermodelo por medio de su relación con el Articlemodelo:
+
+class User < ApplicationRecord
+  has_many :articles, dependent: :destroy
+end
+ 
+class Article < ApplicationRecord
+  after_destroy :log_destroy_action
+ 
+  def log_destroy_action
+    puts 'Article destroyed'
+  end
+end
+ 
+>> user = User.first
+=> #<User id: 1>
+>> user.articles.create!
+=> #<Article id: 1, user_id: 1>
+>> user.destroy
+Article destroyed
+=> #<User id: 1>
+8 devoluciones de llamada condicional
+Al igual que con las validaciones, también podemos condicionar la invocación de un método de devolución de llamada a la satisfacción de un predicado dado. Podemos hacer esto usando las opciones :ify :unless, que pueden tomar un símbolo, a Proco an Array. Puede usar la :ifopción cuando desee especificar bajo qué condiciones debe llamarse la devolución de llamada. Si desea especificar las condiciones bajo las cuales no se debe invocar la devolución de llamada, entonces puede usar la :unlessopción.
+
+8.1 Uso :ify :unlesscon unSymbol
+Puede asociar las opciones :ify :unlesscon un símbolo correspondiente al nombre de un método de predicado que se llamará justo antes de la devolución de llamada. Al usar la :ifopción, la devolución de llamada no se ejecutará si el método del predicado devuelve falso; cuando se utiliza la  :unlessopción, la devolución de llamada no se ejecutará si el método del predicado devuelve verdadero. Esta es la opción más común. Usando esta forma de registro también es posible registrar varios predicados diferentes que se deben llamar para verificar si se debe ejecutar la devolución de llamada.
+
+class Order < ApplicationRecord
+  before_save :normalize_card_number, if: :paid_with_card?
+end
+8.2 Uso :ify :unlesscon unProc
+Finalmente, es posible asociar :ify :unlesscon un Procobjeto. Esta opción es más adecuada cuando se escriben métodos de validación cortos, por lo general de una sola línea:
+
+class Order < ApplicationRecord
+  before_save :normalize_card_number,
+    if: Proc.new { |order| order.paid_with_card? }
+end
+8.3 Condiciones múltiples para devolución de llamada
+Al escribir devoluciones de llamada condicionales, es posible mezclar ambos :ify :unlessen la misma declaración de devolución de llamada:
+
+class Comment < ApplicationRecord
+  after_create :send_email_to_author, if: :author_wants_emails?,
+    unless: Proc.new { |comment| comment.article.ignore_comments? }
+end
+9 clases de devolución de llamada
+A veces, los métodos de devolución de llamada que escriba serán lo suficientemente útiles como para ser reutilizados por otros modelos. Active Record hace posible crear clases que encapsulan los métodos de devolución de llamada, por lo que es muy fácil reutilizarlos.
+
+Aquí hay un ejemplo donde creamos una clase con una after_destroydevolución de llamada para un PictureFilemodelo:
+
+class PictureFileCallbacks
+  def after_destroy(picture_file)
+    if File.exist?(picture_file.filepath)
+      File.delete(picture_file.filepath)
+    end
+  end
+end
+Cuando se declara dentro de una clase, como se indicó anteriormente, los métodos de devolución de llamada recibirán el objeto modelo como parámetro. Ahora podemos usar la clase de devolución de llamada en el modelo:
+
+class PictureFile < ApplicationRecord
+  after_destroy PictureFileCallbacks.new
+end
+Tenga en cuenta que necesitábamos crear una instancia de un nuevo PictureFileCallbacksobjeto, ya que declaramos nuestra devolución de llamada como un método de instancia. Esto es particularmente útil si las devoluciones de llamada hacen uso del estado del objeto instanciado. A menudo, sin embargo, tendrá más sentido declarar las devoluciones de llamada como métodos de clase:
+
+class PictureFileCallbacks
+  def self.after_destroy(picture_file)
+    if File.exist?(picture_file.filepath)
+      File.delete(picture_file.filepath)
+    end
+  end
+end
+Si el método de devolución de llamada se declara de esta manera, no será necesario crear una instancia de un PictureFileCallbacksobjeto.
+
+class PictureFile < ApplicationRecord
+  after_destroy PictureFileCallbacks
+end
+Puede declarar tantas devoluciones de llamada como desee dentro de sus clases de devolución de llamada.
+
+10 devoluciones de llamadas de transacción
+Hay dos devoluciones de llamada adicionales que se desencadenan al completar una transacción de base de datos: after_commity after_rollback. Estas devoluciones de llamada son muy similares a la after_savedevolución de llamada, excepto que no se ejecutan hasta que se hayan confirmado o revertido los cambios en la base de datos. Son más útiles cuando sus modelos de registro activos necesitan interactuar con sistemas externos que no son parte de la transacción de la base de datos.
+
+Considere, por ejemplo, el ejemplo anterior donde el PictureFilemodelo necesita eliminar un archivo después de que se destruye el registro correspondiente. Si algo plantea una excepción después de que after_destroyse llame a la devolución de llamada y la transacción retroceda, el archivo se habrá eliminado y el modelo se dejará en un estado incoherente. Por ejemplo, supongamos que picture_file_2en el siguiente código no es válido y el save!método genera un error.
+
+PictureFile.transaction do
+  picture_file_1.destroy
+  picture_file_2.save!
+end
+Al usar la after_commitdevolución de llamada podemos dar cuenta de este caso.
+
+class PictureFile < ApplicationRecord
+  after_commit :delete_picture_file_from_disk, on: :destroy
+ 
+  def delete_picture_file_from_disk
+    if File.exist?(filepath)
+      File.delete(filepath)
+    end
+  end
+end
+La :onopción especifica cuándo se activará una devolución de llamada. Si no proporciona la :onopción, se activará la devolución de llamada para cada acción.
+
+Dado que el uso de la after_commitdevolución de llamada solo en crear, actualizar o eliminar es común, hay alias para esas operaciones:
+
+after_create_commit
+after_update_commit
+after_destroy_commit
+class PictureFile < ApplicationRecord
+  after_destroy_commit :delete_picture_file_from_disk
+ 
+  def delete_picture_file_from_disk
+    if File.exist?(filepath)
+      File.delete(filepath)
+    end
+  end
+end
+Se requieren llamadas after_commity after_rollbackdevoluciones para todos los modelos creados, actualizados o destruidos dentro de un bloque de transacción. Sin embargo, si se produce una excepción dentro de una de estas devoluciones de llamada, la excepción se disparará y no se ejecutará ningún método after_commito after_rollbackmétodos restantes . Como tal, si su código de devolución de llamada podría generar una excepción, deberá rescatarla y manejarla dentro de la devolución de llamada para permitir que se ejecuten otras devoluciones de llamada.
+
+El uso de ambos after_create_commity after_update_commiten el mismo modelo sólo permitirá la última devolución de llamada definido para tener efecto, y prevalecerá sobre todos los demás.
+
+class User < ApplicationRecord
+  after_create_commit :log_user_saved_to_db
+  after_update_commit :log_user_saved_to_db
+ 
+  private
+  def log_user_saved_to_db
+    puts 'User was saved to database'
+  end
+end
+ 
+# prints nothing
+>> @user = User.create
+ 
+# updating @user
+>> @user.save
+=> User was saved to database
+Para registrar las devoluciones de llamada para las acciones de creación y actualización, use after_commiten su lugar.
+
+class User < ApplicationRecord
+  after_commit :log_user_saved_to_db, on: [:create, :update]
+end
