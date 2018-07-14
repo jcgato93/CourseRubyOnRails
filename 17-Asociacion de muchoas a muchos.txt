@@ -1,0 +1,37 @@
+en estos casos en los que necesitamos este timo de 
+relaciones utilizamos una tabla intermedia
+
+ejemplo: necesitamos relacionar Articles con Category 
+         en este caso los Articulos pueden pertenecer a 
+         muchas categorias , y las Categorias tienen muchos 
+         Articulos 
+
+         crearemos la tabla  "HasCategory" como tabla intermedia
+
+         Cómo programar en Rails y UX - Como articulo y pertenece a           
+            Diseño - Category 
+            Programación - Category
+
+
+1-Crear el modelo de HasCategory 
+
+        Rails g model HasCategory article:references category:references
+
+        rake db:migrate
+
+2-Especificamos las referencias en los modelos 
+
+    en el modelo de Category
+        has_many  :has_categories
+        has_many  :articles, through: :has_categories    # con esto indicamos que Category tiene 
+                                                           muchos articulos atraves de "has_categories"
+    en el modelo de Articles
+        has_many  :has_categories
+        has_many  :categories, through: :has_categories  # con esto indicamos que Articles tiene 
+                                                           muchas categories atraves de "has_categories"
+
+
+
+
+
+         
